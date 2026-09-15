@@ -41,7 +41,7 @@ https://github.com/hugoMGSung/ai-database-2026
 - 자신의 OS에 직접 설치하는 방법
 - postgresql-18.6-3-windows-x64.exe
 - superuser 아이디 - postgres 패스워드 지정
-- port 5432 기억하기
+- **port 5432** 기억하기
 
 ### DBeaver 설치
 
