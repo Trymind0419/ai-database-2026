@@ -4,6 +4,8 @@ AI 에이전트 개발자 데이터베이스 리포지토리
 
 `: 소스 코드나 단어를 표시, **: 글자 bold
 
+마우스 오른쪽 버튼 눌러서 나오는 메뉴 : CONTEXT MENU
+
 ## 1일차
 
 ```
@@ -123,6 +125,8 @@ docker run --name my-postgres -e POSTGRES_PASSWORD=123456 -p 25432:5432 -d postg
 ### DB 기본 사용법
 
 #### PostgreSQL 기본 구조
+
+"" (문자열로 쓰지 않음) / '' 만 문자열!
 
 ![](assets/20260915_142904_image.png)
 
@@ -458,7 +462,7 @@ values (NULL, null, 'seong@gmail.com', null);
 
 #### 필요 개념
 
-- 테이블 설계 - 논리적 테이블 설계, 물리적 테이블 설계
+- 테이블 설계 - 논리적 테이블 설계(우리가 부르는 이름), 물리적 테이블 설계(실제 테이블에 적히는 이름)
 - 컬럼과 데이터 타입 선택
 - 기본키(PK) / 외래키(FK) 제약조건
 - NOT NULL, UNIQUE, CHECK, 제약조건
@@ -506,7 +510,7 @@ values (NULL, null, 'seong@gmail.com', null);
 
 #### 제약조건 ★★★
 
-##### 1. 기본키
+##### 1. 기본키 ★★★★
 
 테이블에서 각 행(row) 구분하는 대표값, Primary Key(PK) - **Unique(중복 X) + Not Null**
 
@@ -518,14 +522,18 @@ values (NULL, null, 'seong@gmail.com', null);
 PostgreSQL 은 `generated always as identity` 숫자 타입의 자동증가, `primary key` 가 기본키를 지정.
 
 ```sql
+-- 자동으로 1씩 증가하며 들어가도록 설정되어 있음.
+-- 실제 대학교에서 학번을 pk로 뒀을시 insert into 쿼리 입력시 pk에 대한 값도 적어야함.
+-- ex) 학번의 경우에는 숫자 같지만 문자열임. 숫자로 둘시 앞에 0이 오게 못 적음.
+-- identity 자동생성관련
 id int generated always as identity primary key
 ```
 
 MySQL: auto_increment, Oracle: identity 로 문법이 다름.
 
-##### 2. 외래키
+##### 2. 외래키 ★★★
 
-다른 테이블의 기본키를 참조하는 컬럼. Foreign Key(FK)
+다른 테이블의 기본키를 참조하는 컬럼. Foreign Key(FK): 남한테서 받는 키
 
 ```plaintext
 Students
@@ -538,4 +546,143 @@ Enrollments(수강)
 - course_name : 수강명
 ```
 
-![](assets/20260916_172444_image.png)
+## 3일차
+
+### 추가 쿼리
+
+- 테이블 수정 쿼리 - 이미 만들어진 상태의 테이블을 수정하는 쿼리
+
+```pgsql
+-- 테이블 컬럼 사이즈 수정
+alter table students
+alter column email type varchar(150);
+```
+
+- 이외 제약조건 수정, 이름 수정, 불필요한 컬럼 삭제 등 수정 쿼리 작업
+
+### 제약조건
+
+#### PK/FK 관계 ★★★
+
+- ![](assets/20260916_172444_image.png)
+- students 부모 테이블 - enrollments 자식 테이블
+
+#### 3. NOT NULL 제약조건
+
+- 해당 컬럼은 반드시 값이 들어가야 함 (변경 가능, NULL 불가)
+
+```pgsql
+name varchar(50) not null
+```
+
+- 아래 쿼리는 오류 발생
+
+```pgsql
+-- 데이터 삽입
+-- 실제 대학교에서 학번을 pk(문자열)로 뒀을시 insert into 쿼리 입력시 pk에 대한 값도 적어야함
+insert into students (age, major)
+values (23, '경영학과');
+```
+
+![](assets/20260917_102640_image.png)
+
+- 이전에 생성된 컬럼을 NOT NULL 로 변경하는 쿼리
+
+```PGSQL
+ALTER TABLE public.students ALTER COLUMN email SET NOT NULL;
+```
+
+![](assets/20260917_103307_image.png)
+
+- NULL 값이 이미 있을 때는  NOT NULL 로 지정 불가.
+- ![](assets/20260917_103106_image.png)
+- GUI로 작업시 Properties -> Columns 에서 변경
+- 이전 테이블에 새 컬럼을 추가할 때 NOT NULL 로만은 생성 불가. NULL로는 생성 가능
+-
+
+#### 4. UNIQUE 제약조건
+
+- 중복이 허용되지 않는 제약조건
+- 보통 이메일이 다른 사용자와 중복은 허용하지 않으나, 내 이메일은 다른 걸로 변경 가능
+
+```pgsql
+-- create가 아니라 수정할 때는 constraint 앞에 add
+ALTER TABLE public.students ADD CONSTRAINT students_unique_email UNIQUE (email);
+```
+
+#### 5. CHECK 제약조건
+
+- 값이 특정 조건을 만족해야함 저장되는 제약조건
+  - 초등학교 학년: 1-6
+  - 대학교 학년: 1-4
+  - 나이: 0세 이상, 200세 이하
+  - 금액: 1000원 이상
+- INT 타입은 -21억 ~ 21억까지 수를 저장. 모두 허용하면 학년에 음수나 0, 1~4 이상의 다른 수 입력 가능.(잘못된 데이터가 들어갈 수 있음.)
+- 이를 방지해서 정확한 데이터만 입력(문자열에도 적용 가능)
+
+```pgsql
+ALTER TABLE public.students ADD grade int NULL;
+```
+
+- check 제약조건 추가
+
+```pgsql
+ALTER TABLE public.students ADD CONSTRAINT ck_students_grade CHECK (grade > 0 and grade <= 4);
+```
+
+- ![](assets/20260917_112352_image.png)
+- 조건 범위 밖 값은 들어가지 않음.
+
+#### 6. DEFAULT 제약조건
+
+- 값을 입력하지 않으면 자동으로 들어가는 기본값
+
+```PGSQL
+created_at timestamp default current_timestamp
+stock int default 0
+```
+
+- 수정 쿼리
+
+```pgsql
+ALTER TABLE public.products ALTER COLUMN category SET DEFAULT '미정';
+```
+
+### 테이블 모델링
+
+관계형 DB에는 테이블 간 관계에 몇 가지 관계성이 존재
+
+
+| 관계   | 설명                                           | 예시                              |
+| ------ | ---------------------------------------------- | --------------------------------- |
+| 일대다 | 부모 테이블 한 행이 자식 테이블 여러 행과 연결 | 학생과 수강신청 관계              |
+| 일대일 | 테이블 한 행이 자식 테이블 한 행과 연결        | 사용자 기본정보와 사용자 상세정보 |
+| 다대다 | 부모테이블 여러행이 자식테이블 여러행과 연결   | 학생과 과목                       |
+
+- 다대다 관계는 DB에서 구현 불가. 일대다 / 일대다 관계로 분리해서 구현
+  ![](assets/20260917_121734_image.png)
+- 학생 한명은 여러 과목을 수강할 수 있음
+- 과목 하나에는 여러 학생이 수강할 수 있음
+- 학생 테이블 주요정보
+
+  - 이름, 이메일, 나이, 전공
+- 과목 테이블
+
+  - 타이틀, 교강사, 시수
+- 수강 신청 주요정보
+
+  - 수강 학생정보 구분값, 과목정보 구분값
+
+#### 모델링 툴
+
+- ERD(Entity Relation ship)
+- ![](assets/20260917_150931_image.png)
+- ![](assets/20260917_150957_image.png)
+- 학생 과목 수강관리 테이블 ERD
+
+#### JOIN
+
+관계형 데이터베이스에서 여러개로 나눈 테이블의 정보를 하나로 합쳐서 조회하는 것
+
+### 트랜잭션 ★
+- 커밋, 롤백
