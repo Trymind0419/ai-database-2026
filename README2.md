@@ -79,3 +79,72 @@ uvicorn main --reload --port 8000
 
   - 127.0.0.1 -> localhost
   - ![](assets/20260918_170916_image.png)
+
+### FastAPI 기본 학슴
+
+#### 웹 응답코드
+
+- 200 : OK 웹페이지에 문제 없음.
+- 404 : 페이지 Not Found. 클라이언트가 요청한 페이지나 데이터가 없음.
+- 500 : Internal Server Error 내부 서버 오류.
+
+#### Swagger UI 확인
+
+- FastAPI 에서 자동으로 제공하는 API 테스트 페이지
+- http(s)://address:port/docs
+- ![](assets/20260921_101453_image.png)
+- 클라이언트 웹페이지에서 데이터를 수정하거나 넣을 수 없으니 위 화면과 같은 Swagger 에서 해야함.
+- api의 결과는 json 타입(문자열 일반적으로 "로 표현, 파이썬 딕셔너리 '로 표현하는 것과 차이점)
+
+#### 경로
+
+- URL 기본 `http(s)://address:port`
+  - address - 127.0.0.1 또는 192.168.0.105 등 IP주소, www.naver.com, google.com 등의 도메인 주소
+  - port - 0 ~ 65535 까지의 숫자
+- `/` - root 기본되는 페이지
+- ex) `/students` - 추가 URL, Restfull URL
+- ex) `/students/1` - 추가 URL. 파라미터
+- `/?key=value&key=value` - URL 경로 GET쿼리 파라미터 (옛날 방식)
+
+#### HTTP(s) 메서드 ★★
+
+FastAPI 는 주소와 HTTP 메서드도 파악 필요
+
+- ![](assets/20260921_112303_image.png)
+- GET 메서드 외에는 Swagger UI 에서 테스트 해야함. POST, PUT, PATCH, DELETE.
+- GET 만 URL에서 처리 가능!
+- ![](assets/20260921_112746_image.png)
+
+#### 요청 본문
+
+- POST 나 PATCH 요청시는 클라이언트가 JSON으로 데이터를 서버에 전달해야 함. 그래야 그 데이터를 등록 또는 수정.
+- FastAPI에서는 Pydantic 패키지 모델을 사용
+- JSON 데이터이므로 파이썬 None 대신 null 로 사용
+- } 닫기 전 ','는 제거 (파이썬은 허용)
+
+#### 메모리 기반 (DB 사용 X) 학생 API 예제
+
+- day05/memorydb.py
+- GET method 함수 내용 생략
+
+##### POST 학생 정보 생성
+
+- POST 메서드 작성
+- Swagger에서 테스트
+
+  - Try it out 클릭
+  - Request body 클릭
+  - ![](assets/20260921_135845_image.png)
+
+##### HTTPException
+
+- API 상에 오류가 발생하면 오류(예외) 처리를 진행
+-
+
+
+| 상태코드   | 의미                   |
+| ---------- | ---------------------- |
+| `200`, 201 | 요청 성공, 생성 성공   |
+|  403,`404` | 권한 없음, 데이터 없음 |
+| `500`      | 서버 오류              |
+
