@@ -6,9 +6,16 @@ students = [
     {'id' : 3, 'name' : '성유고', 'age' : 25, 'major' : '컴퓨터공학'}
 ]
 
+for student in students:
+    print(student)
+    print()
+
+
+
 # enumerate 인덱스 번호를 함께 출력해줌
 for index, student in enumerate(students):
     print(index)
     print(student)
+    print()
 
 
