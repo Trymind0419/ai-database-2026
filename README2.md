@@ -52,7 +52,7 @@ pip list
 
 ### 기초 FastAPI 서버
 
-- 소스 작성
+- [소스](./Day06/main.py) 작성
 - VS Code 재시작
 
 ### 문제해결
@@ -243,7 +243,7 @@ if __name__ == '__main__':
 - 다시 디버깅으로 정상동작 확인하고 완료
 
 
-FastAPI 추가학습 리스트
+### FastAPI 추가학습 리스트
 
 #### DB 연동
 - `ORM`(Object-Relational Mapping) - SQL쿼리 없이 파이썬 코딩만으로 DB CRUD 가능한 기술

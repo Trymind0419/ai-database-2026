@@ -17,7 +17,7 @@ class StudentModel(BaseModel):
     major : str
 
 
-# 전체학생 조회
+# 전체학생 조회소스['/main.py']
 @app.get('/students')
 def get_students():
     conn = get_connection() #실제 DB연결 / connection = conn / F12  누르면 함수가 잘 연결됐는지 확인가능
