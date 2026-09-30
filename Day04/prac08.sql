@@ -84,7 +84,7 @@ group by s.major
 order by s.major asc;
 
 -- 잘못된 JOIN + GROUP BY
-select (*) from courses c 
+select * from courses c 
 	inner join enrollments e
 	on c.id = e.course_id
 	group by c.title;
