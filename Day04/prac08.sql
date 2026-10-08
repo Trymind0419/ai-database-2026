@@ -5,6 +5,7 @@ select * from courses c ;
 
 select * from enrollments e ;
 
+-- inner / outer / self
 -- JOIN
 select s.id "학생번호", s.name "학생이름", s.email "학생이메일", s.major "전공",
 		e.id "수강번호", e.enrolled_at "수강일자", 
